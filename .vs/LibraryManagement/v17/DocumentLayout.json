@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\Lokam\\source\\repos\\LibraryManagement\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8336D38A-A9E1-4F32-A2EE-972FF90484DB}|LibraryManagement\\LibraryManagement.csproj|c:\\users\\lokam\\source\\repos\\librarymanagement\\librarymanagement\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{8336D38A-A9E1-4F32-A2EE-972FF90484DB}|LibraryManagement\\LibraryManagement.csproj|solutionrelative:librarymanagement\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{8336D38A-A9E1-4F32-A2EE-972FF90484DB}|LibraryManagement\\LibraryManagement.csproj|c:\\users\\lokam\\source\\repos\\librarymanagement\\librarymanagement\\repositories\\bookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8336D38A-A9E1-4F32-A2EE-972FF90484DB}|LibraryManagement\\LibraryManagement.csproj|solutionrelative:librarymanagement\\repositories\\bookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -23,25 +19,12 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": ".gitignore",
-              "DocumentMoniker": "C:\\Users\\Lokam\\source\\repos\\LibraryManagement\\LibraryManagement\\.gitignore",
-              "RelativeDocumentMoniker": "LibraryManagement\\.gitignore",
-              "ToolTip": "C:\\Users\\Lokam\\source\\repos\\LibraryManagement\\LibraryManagement\\.gitignore",
-              "RelativeToolTip": "LibraryManagement\\.gitignore",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-29T17:15:25.821Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "BookRepository.cs",
               "DocumentMoniker": "C:\\Users\\Lokam\\source\\repos\\LibraryManagement\\LibraryManagement\\Repositories\\BookRepository.cs",
               "RelativeDocumentMoniker": "LibraryManagement\\Repositories\\BookRepository.cs",
               "ToolTip": "C:\\Users\\Lokam\\source\\repos\\LibraryManagement\\LibraryManagement\\Repositories\\BookRepository.cs",
               "RelativeToolTip": "LibraryManagement\\Repositories\\BookRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-29T17:07:34.91Z",
               "EditorCaption": ""
