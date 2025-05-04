@@ -1,5 +1,8 @@
 ﻿using LibraryManagement.Data;
 using LibraryManagement.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LibraryManagement.Repositories
 {
@@ -12,8 +15,25 @@ namespace LibraryManagement.Repositories
             _context = context;
         }
 
-        public IEnumerable<IssuedBook> GetAll() => _context.IssuedBooks.ToList();
-        public IssuedBook GetById(int id) => _context.IssuedBooks.Find(id);
+        public IEnumerable<IssuedBook> GetAll()
+        {
+            return _context.IssuedBooks.ToList();
+        }
+
+        // ✅ NEW METHOD: Includes Book and Member info
+        public IEnumerable<IssuedBook> GetAllWithDetails()
+        {
+            return _context.IssuedBooks
+                .Include(i => i.Book)
+                .Include(i => i.Member)
+                .ToList();
+        }
+
+        public IssuedBook GetById(int id)
+        {
+            return _context.IssuedBooks.Find(id);
+        }
+
         public void Add(IssuedBook issuedBook)
         {
             _context.IssuedBooks.Add(issuedBook);

@@ -1,6 +1,7 @@
 ﻿namespace LibraryManagement.Models
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class IssuedBook
     {
@@ -11,5 +12,11 @@
         public DateTime IssueDate { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime? ReturnDate { get; set; }
+
+        [ForeignKey(nameof(BookId))]
+        public Book Book { get; set; }
+
+        [ForeignKey(nameof(MemberId))]
+        public Member Member { get; set; }
     }
 }
