@@ -1,12 +1,13 @@
-﻿namespace LibraryManagement.Models
-{
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+namespace LibraryManagement.Models
+{
     public class IssuedBook
     {
         [Key]
-        public int IssueId { get; set; } // 👈 This should be your primary key
+        public int IssueId { get; set; }
         public int BookId { get; set; }
         public int MemberId { get; set; }
         public DateTime IssueDate { get; set; }
@@ -14,9 +15,11 @@
         public DateTime? ReturnDate { get; set; }
 
         [ForeignKey(nameof(BookId))]
-        public Book Book { get; set; }
+        [ValidateNever]
+        public Book? Book { get; set; }
 
         [ForeignKey(nameof(MemberId))]
-        public Member Member { get; set; }
+        [ValidateNever]
+        public Member? Member { get; set; }
     }
 }

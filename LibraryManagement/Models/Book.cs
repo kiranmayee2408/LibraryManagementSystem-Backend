@@ -1,11 +1,22 @@
-﻿namespace LibraryManagement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LibraryManagement.Models
 {
     public class Book
     {
+        [Key]
         public int BookId { get; set; }
-        public string Title { get; set; }
-        public string Author { get; set; }
-        public string ISBN { get; set; }
+
+        [Required]
+        public string Title { get; set; } = string.Empty;
+
+        [Required]
+        public string Author { get; set; } = string.Empty;
+
+        [Required]
+        public string ISBN { get; set; } = string.Empty;
+
+        [Required]
         public int AvailableCopies { get; set; }
     }
 }

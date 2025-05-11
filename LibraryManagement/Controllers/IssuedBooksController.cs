@@ -1,23 +1,30 @@
 ﻿using LibraryManagement.Models;
 using LibraryManagement.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using Microsoft.AspNetCore.SignalR;
+using LibraryManagement.Hubs;
 
 namespace LibraryManagement.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class IssuedBooksController : ControllerBase
     {
         private readonly IIssuedBookRepository _repository;
+        private readonly IHubContext<IssuedBookHub> _hubContext;
 
-        public IssuedBooksController(IIssuedBookRepository repository)
+        public IssuedBooksController(
+            IIssuedBookRepository repository,
+            IHubContext<IssuedBookHub> hubContext)
         {
             _repository = repository;
+            _hubContext = hubContext;
         }
 
-        // GET: api/IssuedBooks
         [HttpGet]
+        [Authorize(Roles = "Admin,Member")]
         public IActionResult GetAll()
         {
             var issuedBooks = _repository.GetAllWithDetails();
@@ -25,61 +32,67 @@ namespace LibraryManagement.Controllers
             var result = issuedBooks.Select(i => new
             {
                 i.IssueId,
-                BookTitle = i.Book?.Title,
-                MemberName = i.Member?.FullName,
+                i.BookId,
+                i.MemberId,
                 i.IssueDate,
                 i.DueDate,
-                i.ReturnDate
+                i.ReturnDate,
+                BookTitle = i.Book?.Title,
+                MemberName = i.Member?.FullName
             });
 
             return Ok(result);
         }
 
-        // GET: api/IssuedBooks/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Member")]
         public IActionResult GetById(int id)
         {
             var issued = _repository.GetById(id);
             if (issued == null)
                 return NotFound();
 
-            var result = new
+            return Ok(new
             {
                 issued.IssueId,
-                BookTitle = issued.Book?.Title,
-                MemberName = issued.Member?.FullName,
+                issued.BookId,
+                issued.MemberId,
                 issued.IssueDate,
                 issued.DueDate,
                 issued.ReturnDate
-            };
-
-            return Ok(result);
+            });
         }
 
-        // POST: api/IssuedBooks
         [HttpPost]
-        public IActionResult Add(IssuedBook book)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Add(IssuedBook book)
         {
+            if (book.BookId == 0 || book.MemberId == 0)
+                return BadRequest("BookId and MemberId are required.");
+
             _repository.Add(book);
+            await _hubContext.Clients.All.SendAsync("IssuedBookUpdated");
             return CreatedAtAction(nameof(GetById), new { id = book.IssueId }, book);
         }
 
-        // PUT: api/IssuedBooks/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, IssuedBook book)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, IssuedBook book)
         {
             if (id != book.IssueId)
-                return BadRequest();
+                return BadRequest("ID mismatch");
 
             _repository.Update(book);
+            await _hubContext.Clients.All.SendAsync("IssuedBookUpdated");
             return NoContent();
         }
 
-        // DELETE: api/IssuedBooks/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
         {
             _repository.Delete(id);
+            await _hubContext.Clients.All.SendAsync("IssuedBookUpdated");
             return NoContent();
         }
     }
