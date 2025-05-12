@@ -12,16 +12,13 @@ using LibraryManagement.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔧 Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 🔐 Identity Services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// 🔐 JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -44,16 +41,15 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
     };
 });
-builder.Services.AddSignalR(); // ✅ Required to register SignalR
+
+builder.Services.AddSignalR();
 builder.Services.AddAuthorization();
 
-// 🧩 Dependency Injection: Repositories & Services
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IIssuedBookRepository, IssuedBookRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-// 📦 MVC + Swagger with JWT Support
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -61,11 +57,11 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.Http, // 👈 this is the key change
-        Scheme = "Bearer",              // 👈 this tells Swagger to prefix with "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter only your JWT token below. 'Bearer' will be added automatically."
+        Description = "Enter only your JWT token."
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -84,58 +80,49 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
-// 🌍 CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder
-            .WithOrigins("http://localhost:4200")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
+        builder.WithOrigins("http://localhost:4200")
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
     });
 });
 
 var app = builder.Build();
 
-// 🧩 Seed Roles & Admin User
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await SeedRolesAndAdminUserAsync(services);
 }
 
-// 🔁 Dev Tools
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Library Management API v1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseCors("AllowAll");
-
-// 🔐 Middleware Order
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 🔽 Default Swagger Redirect
 app.MapGet("/", context =>
 {
     context.Response.Redirect("/swagger");
     return Task.CompletedTask;
 });
 
-// 🚀 Controllers
 app.MapControllers();
 app.MapHub<IssuedBookHub>("/hubs/issued-books");
 app.MapHub<BookHub>("/hubs/books");
 app.MapHub<MemberHub>("/hubs/members");
+
 app.Run();
 
-
-// ✅ Seeding Method
 async Task SeedRolesAndAdminUserAsync(IServiceProvider services)
 {
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
@@ -150,7 +137,6 @@ async Task SeedRolesAndAdminUserAsync(IServiceProvider services)
         }
     }
 
-    // Seed default admin user
     string adminUser = "admin";
     string adminEmail = "admin@example.com";
     string adminPassword = "Admin@123";
@@ -163,10 +149,10 @@ async Task SeedRolesAndAdminUserAsync(IServiceProvider services)
             UserName = adminUser,
             Email = adminEmail,
             FullName = "System Admin",
-            EmailConfirmed = true // ✅ Add this line
+            EmailConfirmed = true
         };
 
-        var result = await userManager.CreateAsync(user, "Admin@123");
+        var result = await userManager.CreateAsync(user, adminPassword);
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(user, "Admin");
