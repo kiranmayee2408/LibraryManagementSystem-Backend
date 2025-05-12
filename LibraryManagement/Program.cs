@@ -96,7 +96,14 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    await SeedRolesAndAdminUserAsync(services);
+    try
+    {
+        await SeedRolesAndAdminUserAsync(services);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"🔥 Error seeding admin user: {ex.Message}");
+    }
 }
 
 app.UseSwagger();
